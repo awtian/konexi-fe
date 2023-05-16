@@ -1,11 +1,13 @@
 import React, { useState } from "react";
 import Image from "next/image";
 import * as XLSX from "xlsx";
+import Footer from "./Footer";
 
 export default function Form(props) {
   const [showTabDropdown, setShowTabDropdown] = useState(false);
   const [currentTab, setCurrentTab] = useState("Tab 1");
   const [search, setSearch] = useState("");
+  const [refreshKey, setRefreshKey] = useState(0);
 
   const setSearchAlphaNumeric = (e) => {
     const value = e.target.value;
@@ -27,6 +29,8 @@ export default function Form(props) {
   };
 
   const downloadExcel = (data) => {
+    localStorage.setItem("last", new Date().toISOString());
+    setRefreshKey(refreshKey + 1);
     const worksheet = XLSX.utils.json_to_sheet(data);
     const workbook = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(workbook, worksheet, currentTab);
@@ -37,17 +41,11 @@ export default function Form(props) {
     <div>
       {/* Account */}
       <div className="w-full mb-3">
-        <label
-          className="block tracking-wide text-gray-700 text-md font-bold mb-2"
-          for="grid-state"
-        >
+        <label className="block tracking-wide text-gray-700 text-md font-bold mb-2">
           Google Account
         </label>
         <div className="relative">
-          <select
-            className="block font-medium appearance-none w-full border border-gray-100 text-gray-700 py-3 px-4 pr-8 rounded leading-tight focus:outline-none focus:bg-white focus:border-gray-200"
-            id="grid-state"
-          >
+          <select className="block font-medium appearance-none w-full border border-gray-100 text-gray-700 py-3 px-4 pr-8 rounded leading-tight focus:outline-none focus:bg-white focus:border-gray-200">
             <option>Account Name</option>
             <option>Account Name 2</option>
             <option>Account Name 3</option>
@@ -72,10 +70,7 @@ export default function Form(props) {
       </div>
       {/* File */}
       <div className="w-full mb-3">
-        <label
-          className="block tracking-wide text-gray-700 text-md font-bold mb-2"
-          for="grid-state"
-        >
+        <label className="block tracking-wide text-gray-700 text-md font-bold mb-2">
           File
         </label>
         <div className="relative">
@@ -113,7 +108,7 @@ export default function Form(props) {
               role="menu"
               aria-orientation="vertical"
               aria-labelledby="menu-button"
-              tabindex="-1"
+              tabIndex="-1"
             >
               <div className="py-1" role="none">
                 <div className="relative flex items-center w-11/12 mx-auto h-12 rounded-lg bg-white overflow-hidden border border-gray-100 pa-2">
@@ -126,9 +121,9 @@ export default function Form(props) {
                       stroke="currentColor"
                     >
                       <path
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        stroke-width="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth="2"
                         d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
                       />
                     </svg>
@@ -149,7 +144,7 @@ export default function Form(props) {
                     onClick={() => handleSetTab(each)}
                     className="text-gray-700 px-4 py-2 cursor-pointer flex justify-between"
                     role="menuitem"
-                    tabindex="-1"
+                    tabIndex="-1"
                     id="menu-item-0"
                   >
                     <p>{each}</p>
@@ -210,6 +205,7 @@ export default function Form(props) {
       >
         Export
       </button>
+      <Footer key={refreshKey} />
     </div>
   );
 }
